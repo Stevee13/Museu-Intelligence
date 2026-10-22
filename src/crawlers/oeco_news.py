@@ -1,6 +1,7 @@
-from base import BaseCrawler
+from .base import BaseCrawler
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from datetime import datetime
 
 class OecoCrawler(BaseCrawler):
     def __init__(self):
@@ -26,40 +27,32 @@ class OecoCrawler(BaseCrawler):
 
         return preview
     
-    def extract_article(self, soup: BeautifulSoup, preview) -> list:
+    def extract_article(self, preview) -> list:
         all_content = []
 
+        #Recebe a variavel preview da função extract_preview() e utiliza a url de cada artigo.
         for a in preview:
             url = a['url']
             soup = self.search_page(url)
 
             if soup:
                 content = soup.select('p.wp-block-paragraph')
-                paragraph = [p.get_text(strip=True) for p in content if p.get_text(strip=True)]#list comprehension que armazena o texto de cada parágrafo não vazio em uma lista
+                paragraph = [p.get_text(strip=True) for p in content if p.get_text(strip=True)]#list comprehension que armazena o texto de cada parágrafo não vazio numa lista
                 all_content.append({
                     'paragraph': paragraph
                 })
 
         return all_content
+
+    #def catch_date(self, soup: BeautifulSoup) -> datetime:
         
     def run(self):
         soup = self.search_page(self.base_url)
         if soup:
             preview = self.extract_preview(soup, self.base_url)
-            content = self.extract_article(soup, self.extract_preview(soup, self.base_url))
+            content = self.extract_article(preview)
             return preview, content
         else:
             print("Erro na busca.")
             return []
 
-if __name__ == "__main__":
-    crawler = OecoCrawler()
-    preview, content = crawler.run()
-
-    print("=== PREVIEWS ===")
-    for article in preview:
-        print(f"Title: {article['title']}, URL: {article['url']}")
-
-    print("\n=== CONTENT ===")
-    for paragraph in content:
-        print(f"Paragraph: {paragraph['paragraph']}")
