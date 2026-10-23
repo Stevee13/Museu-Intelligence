@@ -33,10 +33,10 @@ class OecoCrawler(BaseCrawler):
         #Recebe a variavel preview da função extract_preview() e utiliza a url de cada artigo.
         for a in preview:
             url = a['url']
-            soup = self.search_page(url)
+            temp_url = self.search_page(url)
 
-            if soup:
-                content = soup.select('p.wp-block-paragraph')
+            if temp_url:
+                content = temp_url.select('p.wp-block-paragraph')
                 paragraph = [p.get_text(strip=True) for p in content if p.get_text(strip=True)]#list comprehension que armazena o texto de cada parágrafo não vazio numa lista
                 all_content.append({
                     'paragraph': paragraph
@@ -44,6 +44,33 @@ class OecoCrawler(BaseCrawler):
 
         return all_content
 
-    #def catch_date(self, soup: BeautifulSoup) -> datetime:
-        
+    def catch_date(self, preview) -> datetime:
+        all_dates = []
+
+        for a in preview:
+            url = a['url']
+            temp_url = self.search_page(url)
+
+            if temp_url:
+                date_element = temp_url.select_one("span.text-muted")
+                date = date_element.get_text(strip=True) if date_element else None
+
+                all_dates.append({
+                    'date': date
+                })
+
+        return all_dates
+
+    
+    def run(self):
+        soup = self.search_page(self.base_url)
+        if soup:
+            preview = self.extract_preview(soup, self.base_url)
+            content = self.extract_article(preview)
+            date = self.catch_date(preview)
+            return preview, content, date
+        else:
+            print("Erro na busca.")
+            return []
+
 
