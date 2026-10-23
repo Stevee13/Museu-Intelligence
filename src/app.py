@@ -1,20 +1,18 @@
 from crawlers.oeco_news import OecoCrawler
+import os
 
 
 def main():
     crawler = OecoCrawler()
-    preview, content = crawler.run()
+    articles = crawler.run()
 
-    print("=== PREVIEWS ===")
-    for article in preview:
-        print(f"Title: {article['title']}, URL: {article['url']}")
-
-    print("\n=== CONTENT ===")
-    for item in content:
-        print(f"Paragraphs: {item['paragraph']}")
-
+    for article in articles:
+        print(article['title'])
+        print(f"URL: {article['url']}")
+        print(f"Data: {article['date']}")
+        print(f"Parágrafos: {len(article['paragraphs'])}")
+        print("-" * 40)
 
 if __name__ == "__main__":
+    os.system("clear")
     main()
-
-
