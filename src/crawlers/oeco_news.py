@@ -46,13 +46,4 @@ class OecoCrawler(BaseCrawler):
 
     #def catch_date(self, soup: BeautifulSoup) -> datetime:
         
-    def run(self):
-        soup = self.search_page(self.base_url)
-        if soup:
-            preview = self.extract_preview(soup, self.base_url)
-            content = self.extract_article(preview)
-            return preview, content
-        else:
-            print("Erro na busca.")
-            return []
 
