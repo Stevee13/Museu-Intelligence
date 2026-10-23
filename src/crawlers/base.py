@@ -11,8 +11,7 @@ class BaseCrawler:
 
     def search_page(self, url: str) -> BeautifulSoup:
         try:
-            headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'}#Define o User-Agent para evitar bloqueios por parte do site
-            response = requests.get(url, headers=headers, timeout=10)
+            response = requests.get(url, headers=self.HEADERS, timeout=self.TIMEOUT)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
 
